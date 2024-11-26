@@ -18,7 +18,7 @@ export default function CurrencyInput({
   return (
     <View style={styles.container}>
       <View style={{ width: "20%" }}>
-        <Text style={[styles.text, { fontSize: 30 }]}>{siglaMoeda}</Text>
+        <Text style={[styles.text, { fontSize: 28 }]}>{siglaMoeda}</Text>
         <Text style={styles.text}>{nomeMoeda}</Text>
       </View>
       <TextInput
@@ -46,8 +46,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "white",
     fontSize: 16,
+    fontFamily: "montserrat-medium",
   },
   text: {
     color: "white",
+    fontFamily: "montserrat-medium",
   },
 });

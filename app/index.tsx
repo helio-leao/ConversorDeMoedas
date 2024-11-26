@@ -8,17 +8,24 @@ import Separator from "@/components/Separator";
 import axios, { AxiosError } from "axios";
 import ApiMoedaType from "@/types/ApiMoedaType";
 import DadosConversao from "@/types/DadosConversao";
+import { useFonts } from "expo-font";
 
-const DEFAULT_VALOR_CONVERTIDO = "0.00";
+const VALOR_CONVERTIDO_INICIAL = "0.00";
 
 export default function HomeScreen() {
+  useFonts({
+    "montserrat-medium": require("../assets/fonts/MONTSERRAT-MEDIUM.otf"),
+    "montserrat-black": require("../assets/fonts/MONTSERRAT-BLACK.otf"),
+    "montserrat-bold": require("../assets/fonts/MONTSERRAT-BOLD.otf"),
+  });
+
   const [listaMoedas, setListaMoedas] = useState<ApiMoedaType>({});
   const [dadosConversao, setDadosConversao] = useState<DadosConversao | null>(
     null
   );
 
-  const [valorOrigem, setValorOrigem] = useState("1");
-  const [valorDestino, setValorDestino] = useState(DEFAULT_VALOR_CONVERTIDO);
+  const [valorOrigem, setValorOrigem] = useState("");
+  const [valorDestino, setValorDestino] = useState(VALOR_CONVERTIDO_INICIAL);
 
   const [moedaOrigem, setMoedaOrigem] = useState("BRL");
   const [moedaDestino, setMoedaDestino] = useState("USD");
@@ -32,9 +39,9 @@ export default function HomeScreen() {
         setListaMoedas(data);
       } catch (error) {
         if (error instanceof AxiosError && error.response) {
-          console.log("Error:", error.response.data);
+          console.log("Api Error Response:", error.response.data);
         } else {
-          console.error("Unexpected error:", error);
+          console.error("Erro inesperado:", error);
         }
       }
     }
@@ -42,7 +49,7 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    async function fetchListaMoedas() {
+    async function fetchDadosConversão() {
       try {
         const { data } = await axios(
           `https://economia.awesomeapi.com.br/last/${moedaDestino}-${moedaOrigem}`
@@ -50,21 +57,22 @@ export default function HomeScreen() {
         setDadosConversao(data[`${moedaDestino}${moedaOrigem}`]);
       } catch (error) {
         if (error instanceof AxiosError && error.response) {
-          console.log("Error:", error.response.data);
+          console.log("Api Error Response:", error.response.data);
         } else {
-          console.error("Unexpected error:", error);
+          console.error("Erro inesperado:", error);
         }
         setDadosConversao(null);
       }
     }
-    fetchListaMoedas();
+    fetchDadosConversão();
   }, [moedaOrigem, moedaDestino]);
 
+  // NOTE: calcula a conversão
   useEffect(() => {
     const valorOrigemNumerico = Number(valorOrigem);
 
     if (dadosConversao == null || Number.isNaN(valorOrigemNumerico)) {
-      setValorDestino(DEFAULT_VALOR_CONVERTIDO);
+      setValorDestino(VALOR_CONVERTIDO_INICIAL);
       return;
     }
 
@@ -72,13 +80,13 @@ export default function HomeScreen() {
     const resultado = valorOrigemNumerico * cotacaoNumerica;
 
     setValorDestino(
-      Number.isNaN(resultado) ? DEFAULT_VALOR_CONVERTIDO : resultado.toFixed(2)
+      Number.isNaN(resultado) ? VALOR_CONVERTIDO_INICIAL : resultado.toFixed(2)
     );
   }, [valorOrigem, dadosConversao]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={"black"} barStyle={"light-content"} />
+      <StatusBar backgroundColor={colors.secondary} barStyle={"dark-content"} />
 
       <Text style={styles.titulo}>Conversor de Moedas</Text>
 
@@ -123,14 +131,30 @@ export default function HomeScreen() {
 
       <Separator />
 
-      {dadosConversao && (
-        <View>
-          <Text style={styles.subtitulo}>{dadosConversao.name}</Text>
-          <Text style={[styles.subtitulo, { color: colors.secondary }]}>
-            {dadosConversao.high}
+      <View>
+        {dadosConversao ? (
+          <>
+            <Text style={styles.subtitulo}>{dadosConversao.name}</Text>
+            <Text
+              style={[
+                styles.subtitulo,
+                { color: colors.secondary, fontFamily: "montserrat-bold" },
+              ]}
+            >
+              {dadosConversao.high}
+            </Text>
+          </>
+        ) : (
+          <Text
+            style={[
+              styles.subtitulo,
+              { color: colors.secondary, fontFamily: "montserrat-bold" },
+            ]}
+          >
+            Conversão Indisponível
           </Text>
-        </View>
-      )}
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -143,16 +167,16 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 40,
-    fontWeight: "800",
     textAlign: "center",
     marginBottom: 20,
     color: colors.secondary,
+    fontFamily: "montserrat-bold",
   },
   subtitulo: {
-    fontSize: 30,
-    fontWeight: "800",
+    fontSize: 26,
     textAlign: "center",
     color: "white",
+    fontFamily: "montserrat-medium",
   },
   pickersContainer: {
     flexDirection: "row",
