@@ -1,24 +1,17 @@
+import ApiMoedaType from "@/types/ApiMoedaType";
 import { Picker } from "@react-native-picker/picker";
 import { StyleProp, View, ViewStyle } from "react-native";
 
-export const CurrencyPickerOptions = {
-  REAL: { nome: "Real", sigla: "BRL" },
-  DOLAR: { nome: "Dólar", sigla: "USD" },
-};
-
-export type MoedaPickerValue = {
-  nome: string;
-  sigla: string;
-};
-
 type CurrencyPickerProps = {
+  currencyList: ApiMoedaType;
   style?: StyleProp<ViewStyle>;
-  currency?: MoedaPickerValue;
-  onValueChange?: (value: MoedaPickerValue) => void;
+  currency?: string;
+  onValueChange?: (value: string) => void;
 };
 
 export default function CurrencyPicker({
   style,
+  currencyList,
   currency,
   onValueChange,
 }: CurrencyPickerProps) {
@@ -28,8 +21,9 @@ export default function CurrencyPicker({
         selectedValue={currency}
         onValueChange={(itemValue, _itemIndex) => onValueChange?.(itemValue)}
       >
-        <Picker.Item label="Real" value={CurrencyPickerOptions.REAL} />
-        <Picker.Item label="Dólar" value={CurrencyPickerOptions.DOLAR} />
+        {Object.entries(currencyList).map(([key, value]) => (
+          <Picker.Item key={key} label={`${key} - ${value}`} value={key} />
+        ))}
       </Picker>
     </View>
   );

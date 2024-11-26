@@ -1,24 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView, Text, StatusBar, StyleSheet, View } from "react-native";
-import CurrencyPicker, {
-  CurrencyPickerOptions,
-  MoedaPickerValue,
-} from "@/components/CurrencyPicker";
+import CurrencyPicker from "@/components/CurrencyPicker";
 import Entypo from "@expo/vector-icons/Entypo";
 import { colors } from "@/constants/Colors";
 import CurrencyInput from "@/components/CurrencyInput";
 import Separator from "@/components/Separator";
+import axios from "axios";
+import ApiMoedaType from "@/types/ApiMoedaType";
 
 export default function HomeScreen() {
-  const [deValor, setDeValor] = useState("1");
-  const [paraValor, setParaValor] = useState("");
+  const [listaMoedas, setListaMoedas] = useState<ApiMoedaType>({});
 
-  const [deMoeda, setDeMoeda] = useState<MoedaPickerValue>(
-    CurrencyPickerOptions.REAL
-  );
-  const [paraMoeda, setParaMoeda] = useState<MoedaPickerValue>(
-    CurrencyPickerOptions.DOLAR
-  );
+  const [deValor, setDeValor] = useState("1");
+  const [paraValor, setParaValor] = useState("1");
+
+  const [deMoeda, setDeMoeda] = useState("BRL");
+  const [paraMoeda, setParaMoeda] = useState("USD");
+
+  useEffect(() => {
+    async function fetchListaMoedas() {
+      const { data: moedas } = await axios(
+        "https://economia.awesomeapi.com.br/json/available/uniq"
+      );
+      setListaMoedas(moedas);
+    }
+    fetchListaMoedas();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,6 +36,7 @@ export default function HomeScreen() {
       <View style={styles.pickersContainer}>
         <CurrencyPicker
           style={styles.picker}
+          currencyList={listaMoedas}
           currency={deMoeda}
           onValueChange={setDeMoeda}
         />
@@ -37,6 +45,7 @@ export default function HomeScreen() {
 
         <CurrencyPicker
           style={styles.picker}
+          currencyList={listaMoedas}
           currency={paraMoeda}
           onValueChange={setParaMoeda}
         />
@@ -46,7 +55,8 @@ export default function HomeScreen() {
 
       <View style={styles.inputsContainer}>
         <CurrencyInput
-          currencyData={deMoeda}
+          siglaMoeda={deMoeda}
+          nomeMoeda={listaMoedas[deMoeda]}
           value={deValor}
           onChangeText={setDeValor}
         />
@@ -54,16 +64,20 @@ export default function HomeScreen() {
         <Separator />
 
         <CurrencyInput
-          currencyData={paraMoeda}
+          siglaMoeda={paraMoeda}
+          nomeMoeda={listaMoedas[paraMoeda]}
           value={paraValor}
           onChangeText={setParaValor}
+          editable={false}
         />
       </View>
 
       <Separator />
 
       <View>
-        <Text style={styles.subtitulo}>{`Cotação-${paraMoeda.nome}`}</Text>
+        <Text
+          style={styles.subtitulo}
+        >{`Cotação-${listaMoedas[paraMoeda]}`}</Text>
       </View>
     </SafeAreaView>
   );
