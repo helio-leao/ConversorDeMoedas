@@ -22,7 +22,7 @@ export default function CurrencyPicker({
         onValueChange={(itemValue, _itemIndex) => onValueChange?.(itemValue)}
       >
         {Object.entries(currencyList).map(([key, value]) => (
-          <Picker.Item key={key} label={`${key} - ${value}`} value={key} />
+          <Picker.Item key={key} label={key} value={key} />
         ))}
       </Picker>
     </View>

@@ -5,27 +5,76 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { colors } from "@/constants/Colors";
 import CurrencyInput from "@/components/CurrencyInput";
 import Separator from "@/components/Separator";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import ApiMoedaType from "@/types/ApiMoedaType";
+import DadosConversao from "@/types/DadosConversao";
+
+const DEFAULT_VALOR_CONVERTIDO = "0.00";
 
 export default function HomeScreen() {
   const [listaMoedas, setListaMoedas] = useState<ApiMoedaType>({});
+  const [dadosConversao, setDadosConversao] = useState<DadosConversao | null>(
+    null
+  );
 
-  const [deValor, setDeValor] = useState("1");
-  const [paraValor, setParaValor] = useState("1");
+  const [valorOrigem, setValorOrigem] = useState("1");
+  const [valorDestino, setValorDestino] = useState(DEFAULT_VALOR_CONVERTIDO);
 
-  const [deMoeda, setDeMoeda] = useState("BRL");
-  const [paraMoeda, setParaMoeda] = useState("USD");
+  const [moedaOrigem, setMoedaOrigem] = useState("BRL");
+  const [moedaDestino, setMoedaDestino] = useState("USD");
 
   useEffect(() => {
     async function fetchListaMoedas() {
-      const { data: moedas } = await axios(
-        "https://economia.awesomeapi.com.br/json/available/uniq"
-      );
-      setListaMoedas(moedas);
+      try {
+        const { data } = await axios(
+          "https://economia.awesomeapi.com.br/json/available/uniq"
+        );
+        setListaMoedas(data);
+      } catch (error) {
+        if (error instanceof AxiosError && error.response) {
+          console.log("Error:", error.response.data);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
     }
     fetchListaMoedas();
   }, []);
+
+  useEffect(() => {
+    async function fetchListaMoedas() {
+      try {
+        const { data } = await axios(
+          `https://economia.awesomeapi.com.br/last/${moedaDestino}-${moedaOrigem}`
+        );
+        setDadosConversao(data[`${moedaDestino}${moedaOrigem}`]);
+      } catch (error) {
+        if (error instanceof AxiosError && error.response) {
+          console.log("Error:", error.response.data);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+        setDadosConversao(null);
+      }
+    }
+    fetchListaMoedas();
+  }, [moedaOrigem, moedaDestino]);
+
+  useEffect(() => {
+    const valorOrigemNumerico = Number(valorOrigem);
+
+    if (dadosConversao == null || Number.isNaN(valorOrigemNumerico)) {
+      setValorDestino(DEFAULT_VALOR_CONVERTIDO);
+      return;
+    }
+
+    const cotacaoNumerica = Number(dadosConversao.high);
+    const resultado = valorOrigemNumerico * cotacaoNumerica;
+
+    setValorDestino(
+      Number.isNaN(resultado) ? DEFAULT_VALOR_CONVERTIDO : resultado.toFixed(2)
+    );
+  }, [valorOrigem, dadosConversao]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,8 +86,8 @@ export default function HomeScreen() {
         <CurrencyPicker
           style={styles.picker}
           currencyList={listaMoedas}
-          currency={deMoeda}
-          onValueChange={setDeMoeda}
+          currency={moedaOrigem}
+          onValueChange={setMoedaOrigem}
         />
 
         <Entypo name="arrow-bold-right" size={50} color={colors.secondary} />
@@ -46,8 +95,8 @@ export default function HomeScreen() {
         <CurrencyPicker
           style={styles.picker}
           currencyList={listaMoedas}
-          currency={paraMoeda}
-          onValueChange={setParaMoeda}
+          currency={moedaDestino}
+          onValueChange={setMoedaDestino}
         />
       </View>
 
@@ -55,30 +104,33 @@ export default function HomeScreen() {
 
       <View style={styles.inputsContainer}>
         <CurrencyInput
-          siglaMoeda={deMoeda}
-          nomeMoeda={listaMoedas[deMoeda]}
-          value={deValor}
-          onChangeText={setDeValor}
+          siglaMoeda={moedaOrigem}
+          nomeMoeda={listaMoedas[moedaOrigem]}
+          value={valorOrigem}
+          onChangeText={setValorOrigem}
         />
 
         <Separator />
 
         <CurrencyInput
-          siglaMoeda={paraMoeda}
-          nomeMoeda={listaMoedas[paraMoeda]}
-          value={paraValor}
-          onChangeText={setParaValor}
+          siglaMoeda={moedaDestino}
+          nomeMoeda={listaMoedas[moedaDestino]}
+          value={valorDestino}
+          onChangeText={setValorDestino}
           editable={false}
         />
       </View>
 
       <Separator />
 
-      <View>
-        <Text
-          style={styles.subtitulo}
-        >{`Cotação-${listaMoedas[paraMoeda]}`}</Text>
-      </View>
+      {dadosConversao && (
+        <View>
+          <Text style={styles.subtitulo}>{dadosConversao.name}</Text>
+          <Text style={[styles.subtitulo, { color: colors.secondary }]}>
+            {dadosConversao.high}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -90,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   titulo: {
-    fontSize: 44,
+    fontSize: 40,
     fontWeight: "800",
     textAlign: "center",
     marginBottom: 20,
@@ -100,7 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "800",
     textAlign: "center",
-    marginBottom: 20,
     color: "white",
   },
   pickersContainer: {

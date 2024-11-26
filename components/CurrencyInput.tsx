@@ -16,19 +16,15 @@ export default function CurrencyInput({
   onChangeText,
 }: CurrencyInputProps) {
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    >
+    <View style={styles.container}>
       <View style={{ width: "20%" }}>
-        <Text style={styles.text}>{siglaMoeda}</Text>
+        <Text style={[styles.text, { fontSize: 30 }]}>{siglaMoeda}</Text>
         <Text style={styles.text}>{nomeMoeda}</Text>
       </View>
       <TextInput
         style={[styles.input, { flexGrow: 1 }]}
         value={value}
+        placeholder="999.99"
         onChangeText={onChangeText}
         keyboardType="numeric"
         editable={editable}
@@ -38,6 +34,11 @@ export default function CurrencyInput({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+  },
   input: {
     borderWidth: 1,
     borderRadius: 8,
