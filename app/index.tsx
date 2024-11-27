@@ -24,7 +24,7 @@ export default function HomeScreen() {
     null
   );
 
-  const [valorOrigem, setValorOrigem] = useState("");
+  const [valorOrigem, setValorOrigem] = useState("1");
   const [valorDestino, setValorDestino] = useState(VALOR_CONVERTIDO_INICIAL);
 
   const [moedaOrigem, setMoedaOrigem] = useState("BRL");
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     backgroundColor: "white",
-    width: "40%",
+    width: 130,
     borderRadius: 8,
   },
   inputsContainer: {},
