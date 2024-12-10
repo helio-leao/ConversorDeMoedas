@@ -35,7 +35,7 @@ export default function CurrencyInput({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 10,
+    gap: 4,
   },
   input: {
     borderWidth: 1,
