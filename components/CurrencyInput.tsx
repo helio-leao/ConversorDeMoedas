@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderRadius: 4,
-    paddingVertical: 18,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     backgroundColor: "white",
     fontSize: 16,

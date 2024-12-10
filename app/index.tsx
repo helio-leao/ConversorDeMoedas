@@ -30,6 +30,12 @@ export default function HomeScreen() {
   const [moedaOrigem, setMoedaOrigem] = useState("BRL");
   const [moedaDestino, setMoedaDestino] = useState("USD");
 
+  // NOTE: used in dropdown component
+  const listaMoedasArray = Object.entries(listaMoedas).map(([key, value]) => ({
+    label: `${value} (${key})`,
+    value: key,
+  }));
+
   useEffect(() => {
     async function fetchListaMoedas() {
       try {
@@ -94,15 +100,12 @@ export default function HomeScreen() {
         <Dropdown
           selectedValue={moedaOrigem}
           onChangeSelection={setMoedaOrigem}
-          data={listaMoedas}
+          data={listaMoedasArray}
         />
-
-        <Entypo name="arrow-bold-right" size={50} color={colors.secondary} />
-
         <Dropdown
           selectedValue={moedaDestino}
           onChangeSelection={setMoedaDestino}
-          data={listaMoedas}
+          data={listaMoedasArray}
         />
       </View>
 
@@ -164,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   titulo: {
-    fontSize: 40,
+    fontSize: 36,
     textAlign: "center",
     marginBottom: 20,
     color: colors.secondary,
@@ -178,8 +181,6 @@ const styles = StyleSheet.create({
   },
   pickersContainer: {
     gap: 10,
-    flexDirection: "row",
-    alignItems: "center",
   },
   inputsContainer: {},
 });

@@ -15,41 +15,43 @@ function normalizeText(text: string) {
 }
 
 type Item = {
-  [key: string]: string;
+  label: string;
+  value: string;
 };
 
 type DropdownProps = {
   selectedValue: string;
-  data: Item;
+  data: Item[];
   onChangeSelection?: (value: string) => void;
 };
 
 export default function Dropdown({
-  selectedValue = "",
-  data = {},
+  selectedValue,
+  data,
   onChangeSelection,
 }: DropdownProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [filteredData, setFilteredData] = useState<Item>({});
+  const [filteredData, setFilteredData] = useState<Item[]>([]);
 
-  // NOTE: roda quando as props são atualizadas
   useEffect(() => {
-    console.log(selectedValue);
-    setInputValue(selectedValue);
-  }, [selectedValue]);
+    if (!selectedValue) setInputValue("");
 
-  // NOTE: filtra moedas pelo nome digitado
+    const selectedValueLabel = data.find(
+      (item) => item.value === selectedValue
+    );
+    setInputValue(selectedValueLabel?.label || "");
+  }, [selectedValue, data]);
+
   useEffect(() => {
     if (!inputValue) setFilteredData(data);
 
     const regex = new RegExp(normalizeText(inputValue), "i");
-    const filtered = Object.entries(data).filter(
-      ([key, value]) =>
-        normalizeText(key).match(regex) || normalizeText(value).match(regex)
+    const filtered = data.filter((item) =>
+      normalizeText(item.label).match(regex)
     );
-    setFilteredData(Object.fromEntries(filtered));
-  }, [inputValue, data]);
+    setFilteredData(filtered);
+  }, [inputValue]);
 
   function handleToggleModal() {
     setInputValue("");
@@ -60,9 +62,9 @@ export default function Dropdown({
     setInputValue("");
   }
 
-  function handleItemSelect(key: string) {
-    onChangeSelection?.(key);
-    setInputValue(key);
+  function handleItemSelect(item: Item) {
+    onChangeSelection?.(item.value);
+    setInputValue(item.label);
     setModalOpen(false);
   }
 
@@ -72,12 +74,14 @@ export default function Dropdown({
         style={styles.buttonContainer}
         onPress={handleToggleModal}
       >
-        <Text style={styles.text}>{inputValue}</Text>
-        <FontAwesome name="chevron-down" size={16} color="black" />
+        <Text style={styles.text} numberOfLines={1}>
+          {inputValue}
+        </Text>
+        {/* <FontAwesome name="chevron-down" size={16} color="black" /> */}
       </TouchableOpacity>
 
       <Modal
-        visible={modalOpen && Object.keys(data).length > 0}
+        visible={modalOpen && data.length > 0}
         animationType="slide"
         transparent
         onRequestClose={() => {}}
@@ -91,7 +95,7 @@ export default function Dropdown({
               placeholder="Buscar pelo nome..."
             />
             <TouchableOpacity
-              style={styles.inputClearButton}
+              style={styles.inputClearButtonContainer}
               onPress={handleClearInput}
             >
               <FontAwesome name="close" size={16} color="black" />
@@ -99,16 +103,14 @@ export default function Dropdown({
           </View>
 
           <FlatList
-            data={Object.entries(filteredData)}
+            data={filteredData}
             contentContainerStyle={{ backgroundColor: "#fff" }}
-            renderItem={({ item: [key, value] }) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.itemButtonContainer}
-                onPress={() => handleItemSelect(key)}
+                onPress={() => handleItemSelect(item)}
               >
-                <Text style={styles.text}>
-                  {value} - {key}
-                </Text>
+                <Text style={styles.text}>{item.label}</Text>
               </TouchableOpacity>
             )}
           />
@@ -120,13 +122,10 @@ export default function Dropdown({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    flex: 1,
     backgroundColor: "#fff",
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 18,
-    paddingHorizontal: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 4,
   },
   text: {
@@ -144,7 +143,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    paddingVertical: 18,
+    paddingVertical: 12,
     paddingLeft: 14,
     paddingRight: 40,
     borderTopLeftRadius: 4,
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     fontFamily: "montserrat-medium",
   },
-  inputClearButton: {
+  inputClearButtonContainer: {
     position: "absolute",
     right: 0,
     height: 40,
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemButtonContainer: {
-    paddingVertical: 18,
-    padding: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
   },
 });
