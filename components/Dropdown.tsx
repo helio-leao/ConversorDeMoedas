@@ -74,7 +74,7 @@ export default function Dropdown({
         style={styles.buttonContainer}
         onPress={handleToggleModal}
       >
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={{ fontFamily: "montserrat-bold" }} numberOfLines={1}>
           {inputValue}
         </Text>
         {/* <FontAwesome name="chevron-down" size={16} color="black" /> */}

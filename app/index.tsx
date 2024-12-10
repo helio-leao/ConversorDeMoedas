@@ -59,7 +59,6 @@ export default function HomeScreen() {
         const { data } = await axios(
           `https://economia.awesomeapi.com.br/last/${moedaOrigem}-${moedaDestino}`
         );
-        console.log(data);
         setDadosConversao(data[`${moedaOrigem}${moedaDestino}`]);
       } catch (error) {
         if (error instanceof AxiosError && error.response) {
