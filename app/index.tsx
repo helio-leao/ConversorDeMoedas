@@ -94,10 +94,7 @@ export default function HomeScreen() {
         <Dropdown
           selectedValue={moedaOrigem}
           onChangeSelection={setMoedaOrigem}
-          data={Object.entries(listaMoedas).map(([key, value]) => ({
-            label: `${value} (${key})`,
-            value: key,
-          }))}
+          data={listaMoedas}
         />
 
         <Entypo name="arrow-bold-right" size={50} color={colors.secondary} />
@@ -105,10 +102,7 @@ export default function HomeScreen() {
         <Dropdown
           selectedValue={moedaDestino}
           onChangeSelection={setMoedaDestino}
-          data={Object.entries(listaMoedas).map(([key, value]) => ({
-            label: `${value} (${key})`,
-            value: key,
-          }))}
+          data={listaMoedas}
         />
       </View>
 
@@ -138,7 +132,7 @@ export default function HomeScreen() {
       <View>
         {dadosConversao ? (
           <>
-            <Text style={styles.subtitulo}>{dadosConversao.name}</Text>
+            <Text style={styles.subtitulo}>Cotação</Text>
             <Text
               style={[
                 styles.subtitulo,

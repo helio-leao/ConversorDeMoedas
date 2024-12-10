@@ -15,43 +15,41 @@ function normalizeText(text: string) {
 }
 
 type Item = {
-  label: string;
-  value: string;
+  [key: string]: string;
 };
 
 type DropdownProps = {
   selectedValue: string;
-  data: Item[];
+  data: Item;
   onChangeSelection?: (value: string) => void;
 };
 
 export default function Dropdown({
-  selectedValue,
-  data,
+  selectedValue = "",
+  data = {},
   onChangeSelection,
 }: DropdownProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [filteredData, setFilteredData] = useState<Item[]>([]);
+  const [filteredData, setFilteredData] = useState<Item>({});
 
+  // NOTE: roda quando as props são atualizadas
   useEffect(() => {
-    if (!selectedValue) setInputValue("");
+    console.log(selectedValue);
+    setInputValue(selectedValue);
+  }, [selectedValue]);
 
-    const selectedValueLabel = data.find(
-      (item) => item.value === selectedValue
-    );
-    setInputValue(selectedValueLabel?.label || "");
-  }, [selectedValue, data]);
-
+  // NOTE: filtra moedas pelo nome digitado
   useEffect(() => {
     if (!inputValue) setFilteredData(data);
 
     const regex = new RegExp(normalizeText(inputValue), "i");
-    const filtered = data.filter((item) =>
-      normalizeText(item.label).match(regex)
+    const filtered = Object.entries(data).filter(
+      ([key, value]) =>
+        normalizeText(key).match(regex) || normalizeText(value).match(regex)
     );
-    setFilteredData(filtered);
-  }, [inputValue]);
+    setFilteredData(Object.fromEntries(filtered));
+  }, [inputValue, data]);
 
   function handleToggleModal() {
     setInputValue("");
@@ -62,9 +60,9 @@ export default function Dropdown({
     setInputValue("");
   }
 
-  function handleItemSelect(item: Item) {
-    onChangeSelection?.(item.value);
-    setInputValue(item.label);
+  function handleItemSelect(key: string) {
+    onChangeSelection?.(key);
+    setInputValue(key);
     setModalOpen(false);
   }
 
@@ -74,14 +72,12 @@ export default function Dropdown({
         style={styles.buttonContainer}
         onPress={handleToggleModal}
       >
-        <Text style={styles.text} numberOfLines={1}>
-          {inputValue}
-        </Text>
+        <Text style={styles.text}>{inputValue}</Text>
         <FontAwesome name="chevron-down" size={16} color="black" />
       </TouchableOpacity>
 
       <Modal
-        visible={modalOpen && data.length > 0}
+        visible={modalOpen && Object.keys(data).length > 0}
         animationType="slide"
         transparent
         onRequestClose={() => {}}
@@ -103,14 +99,16 @@ export default function Dropdown({
           </View>
 
           <FlatList
-            data={filteredData}
+            data={Object.entries(filteredData)}
             contentContainerStyle={{ backgroundColor: "#fff" }}
-            renderItem={({ item }) => (
+            renderItem={({ item: [key, value] }) => (
               <TouchableOpacity
                 style={styles.itemButtonContainer}
-                onPress={() => handleItemSelect(item)}
+                onPress={() => handleItemSelect(key)}
               >
-                <Text style={styles.text}>{item.label}</Text>
+                <Text style={styles.text}>
+                  {value} - {key}
+                </Text>
               </TouchableOpacity>
             )}
           />
