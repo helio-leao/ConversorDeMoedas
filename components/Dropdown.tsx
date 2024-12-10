@@ -104,6 +104,7 @@ export default function Dropdown({
 
           <FlatList
             data={filteredData}
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ backgroundColor: "#fff" }}
             renderItem={({ item }) => (
               <TouchableOpacity
