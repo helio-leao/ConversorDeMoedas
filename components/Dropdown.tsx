@@ -124,8 +124,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     backgroundColor: "#fff",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 16,
     borderRadius: 4,
   },
   text: {
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#00000080",
     width: "100%",
     height: "100%",
-    padding: 10,
+    padding: 16,
   },
   inputContainer: {
     flexDirection: "row",
@@ -143,8 +142,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
-    paddingLeft: 14,
+    padding: 16,
     paddingRight: 40,
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
@@ -161,7 +159,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemButtonContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    padding: 16,
   },
 });
