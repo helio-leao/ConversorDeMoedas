@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ConversorDeMoedas",
-    "slug": "ConversorDeMoedas",
+    "slug": "conversordemoedas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.hmleao.conversordemoedas"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "63e8169a-893a-4f0e-a7cb-9b5fbe86ea78"
+      }
+    },
+    "owner": "hmleao"
   }
 }
