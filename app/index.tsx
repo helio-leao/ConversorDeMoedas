@@ -57,9 +57,10 @@ export default function HomeScreen() {
     async function fetchDadosConversão() {
       try {
         const { data } = await axios(
-          `https://economia.awesomeapi.com.br/last/${moedaDestino}-${moedaOrigem}`
+          `https://economia.awesomeapi.com.br/last/${moedaOrigem}-${moedaDestino}`
         );
-        setDadosConversao(data[`${moedaDestino}${moedaOrigem}`]);
+        console.log(data);
+        setDadosConversao(data[`${moedaOrigem}${moedaDestino}`]);
       } catch (error) {
         if (error instanceof AxiosError && error.response) {
           console.log("Api Error Response:", error.response.data);
@@ -134,7 +135,7 @@ export default function HomeScreen() {
       <View>
         {dadosConversao ? (
           <>
-            <Text style={styles.subtitulo}>Cotação</Text>
+            <Text style={styles.subtitulo}>{dadosConversao.name}</Text>
             <Text
               style={[
                 styles.subtitulo,
