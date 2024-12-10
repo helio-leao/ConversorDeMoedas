@@ -74,8 +74,9 @@ export default function Dropdown({
         style={styles.buttonContainer}
         onPress={handleToggleModal}
       >
-        {/* <Text style={styles.buttonText}>{inputValue}</Text> */}
-        <Text style={styles.text}>{selectedValue}</Text>
+        <Text style={styles.text} numberOfLines={1}>
+          {inputValue}
+        </Text>
         <FontAwesome name="chevron-down" size={16} color="black" />
       </TouchableOpacity>
 
@@ -129,7 +130,6 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 10,
     borderRadius: 4,
-    gap: 10,
   },
   text: {
     fontFamily: "montserrat-medium",

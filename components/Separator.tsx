@@ -7,7 +7,7 @@ export default function Separator() {
       style={{
         backgroundColor: colors.secondary,
         height: 1,
-        marginVertical: 26,
+        marginVertical: 10,
       }}
     />
   );
