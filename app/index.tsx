@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, Text, StatusBar, StyleSheet, View } from "react-native";
-import Entypo from "@expo/vector-icons/Entypo";
 import { colors } from "@/constants/Colors";
 import CurrencyInput from "@/components/CurrencyInput";
 import Separator from "@/components/Separator";
@@ -177,7 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     textAlign: "center",
     color: "white",
-    fontFamily: "montserrat-medium",
+    fontFamily: "montserrat-bold",
   },
   pickersContainer: {
     gap: 10,
