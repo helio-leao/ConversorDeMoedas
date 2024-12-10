@@ -74,8 +74,8 @@ export default function Dropdown({
         style={styles.buttonContainer}
         onPress={handleToggleModal}
       >
-        {/* <Text>{inputValue}</Text> */}
-        <Text>{selectedValue}</Text>
+        {/* <Text style={styles.buttonText}>{inputValue}</Text> */}
+        <Text style={styles.text}>{selectedValue}</Text>
         <FontAwesome name="chevron-down" size={16} color="black" />
       </TouchableOpacity>
 
@@ -109,7 +109,7 @@ export default function Dropdown({
                 style={styles.itemButtonContainer}
                 onPress={() => handleItemSelect(item)}
               >
-                <Text>{item.label}</Text>
+                <Text style={styles.text}>{item.label}</Text>
               </TouchableOpacity>
             )}
           />
@@ -131,6 +131,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     gap: 10,
   },
+  text: {
+    fontFamily: "montserrat-medium",
+  },
   modalContentContainer: {
     backgroundColor: "#00000080",
     width: "100%",
@@ -146,8 +149,11 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingLeft: 14,
     paddingRight: 40,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
+    fontFamily: "montserrat-medium",
   },
   inputClearButton: {
     position: "absolute",
