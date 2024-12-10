@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, Text, StatusBar, StyleSheet, View } from "react-native";
-import CurrencyPicker from "@/components/CurrencyPicker";
 import Entypo from "@expo/vector-icons/Entypo";
 import { colors } from "@/constants/Colors";
 import CurrencyInput from "@/components/CurrencyInput";
@@ -9,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import ApiMoedaType from "@/types/ApiMoedaType";
 import DadosConversao from "@/types/DadosConversao";
 import { useFonts } from "expo-font";
+import Dropdown from "@/components/Dropdown";
 
 const VALOR_CONVERTIDO_INICIAL = "0.00";
 
@@ -91,20 +91,24 @@ export default function HomeScreen() {
       <Text style={styles.titulo}>Conversor de Moedas</Text>
 
       <View style={styles.pickersContainer}>
-        <CurrencyPicker
-          style={styles.picker}
-          currencyList={listaMoedas}
-          currency={moedaOrigem}
-          onValueChange={setMoedaOrigem}
+        <Dropdown
+          selectedValue={moedaOrigem}
+          onChangeSelection={setMoedaOrigem}
+          data={Object.entries(listaMoedas).map(([key, value]) => ({
+            label: `${value} (${key})`,
+            value: key,
+          }))}
         />
 
         <Entypo name="arrow-bold-right" size={50} color={colors.secondary} />
 
-        <CurrencyPicker
-          style={styles.picker}
-          currencyList={listaMoedas}
-          currency={moedaDestino}
-          onValueChange={setMoedaDestino}
+        <Dropdown
+          selectedValue={moedaDestino}
+          onChangeSelection={setMoedaDestino}
+          data={Object.entries(listaMoedas).map(([key, value]) => ({
+            label: `${value} (${key})`,
+            value: key,
+          }))}
         />
       </View>
 
@@ -179,14 +183,9 @@ const styles = StyleSheet.create({
     fontFamily: "montserrat-medium",
   },
   pickersContainer: {
+    gap: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-  },
-  picker: {
-    backgroundColor: "white",
-    width: 130,
-    borderRadius: 8,
   },
   inputsContainer: {},
 });
